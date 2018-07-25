@@ -21,13 +21,13 @@ class ShopsController extends Controller
     }
     //添加
     public function create(){
-        $shop_categories=ShopCategory::all();
+        $shop_categories=ShopCategory::all()->where('status','=',1);
         return view('shop/create',['shop_categories'=>$shop_categories]);
     }
     public function store(Request $request){
         $this->validate($request, [
-            'name' => 'required|max:50',
-            'email' => 'required',
+            'name' => 'required|max:50|unique:shop_users,name',
+            'email' => 'required|email|unique:shop_users,email',
             'password' => 'required',
             're_password' => 'required',
             'shop_name' => 'required|max:50',
@@ -35,9 +35,12 @@ class ShopsController extends Controller
             'send_cost' => 'required|numeric',
             'shop_img' => 'required',
         ],[
-            'name.required'=>'请输入商家名',
-            'name.max'=>'商家名过长',
+            'name.required'=>'请输入账户名',
+            'name.max'=>'账户名字过长',
+            'name.unique'=>'已存在的账户名',
             'email.required'=>'请输入邮箱',
+            'email.email'=>'错误的邮箱格式',
+            'email.unique'=>'邮箱已被使用',
             'password.required'=>'请输入密码',
             're_password.required'=>'请再次输入密码',
             'shop_name.required'=>'请输入店铺名',
@@ -51,8 +54,7 @@ class ShopsController extends Controller
         if ($request->password!=$request->re_password){
             return back()->withInput()->with('danger','两次密码输入不一致');
         }
-        $shop_img=$request->shop_img->store('public/shop');
-        $shop_img=\Illuminate\Support\Facades\Storage::url($shop_img);
+        $shop_img=$request->shop_img;
 
         DB::transaction(function () use ($request,$shop_img) {
             $new_shop=Shop::create([
@@ -70,7 +72,7 @@ class ShopsController extends Controller
                 'shop_rating'=>3,
                 'status'=>1,
                 'shop_category_id'=>$request->shop_category_id,
-                'shop_img'=>url($shop_img),
+                'shop_img'=>$shop_img,
             ]);
             ShopUser::create([
                 'name'=>$request->name,
@@ -96,20 +98,15 @@ class ShopsController extends Controller
     //修改
     public function edit(Shop $shop){
         $shop_user=ShopUser::where('shop_id','=',$shop->id)->first();
-        $shop_categories=ShopCategory::all();
+        $shop_categories=ShopCategory::all()->where('status','=',1);
         return view('shop/edit',['shop'=>$shop,'shop_user'=>$shop_user,'shop_categories'=>$shop_categories]);
     }
     public function update(Request $request,Shop $shop,ShopUser $shop_user){
         $this->validate($request, [
-            'name' => 'required|max:50',
-            'email' => 'required',
             'shop_name' => 'required|max:50',
             'start_send' => 'required|numeric',
             'send_cost' => 'required|numeric',
         ],[
-            'name.required'=>'请输入商家名',
-            'name.max'=>'商家名过长',
-            'email.required'=>'请输入邮箱',
             'shop_name.required'=>'请输入店铺名',
             'shop_name.max'=>'店铺名过长',
             'start_send.required'=>'请输入起送价',
@@ -132,14 +129,9 @@ class ShopsController extends Controller
             'shop_category_id'=>$request->shop_category_id,
         ];
         if ($request->shop_img){
-            $shop_img=$request->shop_img->store('public/shop');
-            $shop_update['shop_img']=url(\Illuminate\Support\Facades\Storage::url($shop_img));
+            $shop_update['shop_img']=$request->shop_img;
         }
         $shop->update($shop_update);
-//        $shop_user->update([
-//            'name'=>$request->name,
-//            'email'=>$request->email,
-//        ]);
 
         session()->flash('success','修改成功');
         return redirect()->route('shops.index');

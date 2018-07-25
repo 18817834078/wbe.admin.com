@@ -6,6 +6,7 @@ use App\model\Shop;
 use App\model\ShopCategory;
 use App\model\ShopUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ShopCategoriesController extends Controller
 {
@@ -28,15 +29,13 @@ class ShopCategoriesController extends Controller
             'name.max'=>'分类名过长',
             'img.required'=>'请上传一张对应的图片',
         ]);
-        $img=$request->img->store('public/shop_category');
-        $img=url(\Illuminate\Support\Facades\Storage::url($img));
         if (!$request->status){
             $request->status=0;
         }
         ShopCategory::create([
             'name'=>$request->name,
             'status'=>$request->status,
-            'img'=>$img,
+            'img'=>$request->img,
         ]);
         session()->flash('success','添加成功');
         return redirect()->route('shop_categories.index');
@@ -44,6 +43,9 @@ class ShopCategoriesController extends Controller
     }
     //删除
     public function destroy(ShopCategory $shop_category){
+        if(Shop::where('shop_category_id','=',$shop_category->id)->first()){
+            return back()->with('danger','此分类下存在商家,不能删除');
+        };
         $shop_category->delete();
         session()->flash('success','删除成功');
         return redirect()->route('shop_categories.index');
@@ -64,7 +66,7 @@ class ShopCategoriesController extends Controller
         }
         $update=['name'=>$request->name,'status'=>$request->status];
         if ($request->img){
-            $update['img']=url(\Illuminate\Support\Facades\Storage::url($request->img->store('public/shop_category')));
+            $update['img']=$request->img;
         }
         $shop_category->update($update);
         session()->flash('success','修改成功');
