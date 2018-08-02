@@ -35,11 +35,14 @@
                     <td>{{substr($activity->start_time,0,16)}}</td>
                     <td>{{substr($activity->end_time,0,16)}}</td>
                     <td class="row">
+                        @can('活动查看')
                         <div class="col-xs-2">
                             <a href="{{route('activities.show',[$activity])}}">
                                 <button type="submit" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-zoom-in"></span></button>
                             </a>
                         </div>
+                            @endcan
+                            @can('活动操作')
                         <div class="col-xs-2">
                             <a href="{{route('activities.edit',[$activity])}}">
                                 <button type="submit" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></span></button>
@@ -52,6 +55,7 @@
                                 {{csrf_field()}}
                             </form>
                         </div>
+                            @endcan
                     </td>
                 </tr>
             @endforeach

@@ -25,13 +25,25 @@
 <body>
 @include('_nav')
 <div class="container-fluid row">
-    <div class="col-xs-2">
-        <div class="container"><a href="{{route('shop_categories.index')}}"><h5>商店分类</h5></a> </div>
-        <div class="container"><a href="{{route('shops.index')}}"><h5>商店列表</h5></a> </div>
-        <div class="container"><a href="{{route('shop_users.index')}}"><h5>账户列表</h5></a> </div>
-        <div class="container"><a href="{{route('admins.index')}}"><h5>管理员列表</h5></a> </div>
-        <div class="container"><a href="{{route('activities.index')}}"><h5>活动列表</h5></a> </div>
-    </div>
+        <div class="col-xs-2">
+            <ul class="nav nav-pills nav-stacked">
+                {{--@foreach(\App\model\Nav::where('pid','0')->get() as $nav)--}}
+                        {{--<li class="dropdown">--}}
+                    {{--<span  class="dropdown-toggle list-group-item" data-toggle="dropdown" role="button" aria-haspopup="true"--}}
+                           {{--aria-expanded="false">{{$nav->name}} <span class="caret"></span></span>--}}
+                            {{--<ul class="dropdown-menu">--}}
+                                {{--@foreach(\App\model\Nav::where('pid',$nav->id)->get() as $n)--}}
+                                        {{--@can($nav->permission->name)--}}
+                                        {{--<li><a href='{{route("$n->url")}}'>{{$n->name}}</a></li>--}}
+                                        {{--@endcan--}}
+                                {{--@endforeach--}}
+                            {{--</ul>--}}
+                        {{--</li>--}}
+                {{--@endforeach--}}
+                {!! \App\model\Nav::getHTML() !!}
+            </ul>
+
+        </div>
     <div class="col-xs-10 container">
         <div class="container-fluid">@include('/success')</div>
         @yield('content')

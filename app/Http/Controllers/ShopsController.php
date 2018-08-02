@@ -7,6 +7,7 @@ use App\model\ShopCategory;
 use App\model\ShopUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class ShopsController extends Controller
 {
@@ -146,6 +147,8 @@ class ShopsController extends Controller
         $shop->update([
             'status'=>$request->status
         ]);
+
+
         return back()->with('success','商店审核成功');
     }
 }

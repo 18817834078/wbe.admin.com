@@ -1,7 +1,9 @@
 @extends('default')
 @section('content')
     <div class="container-fluid">
+        @can('商店操作')
         <a href="{{route('shops.create')}}"><button type="button" class="btn btn-primary">添加商店及账户</button></a>
+            @endcan
     </div>
     <div class="container-fluid">
         <ul class="list-unstyled">

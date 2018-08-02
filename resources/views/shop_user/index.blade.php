@@ -1,7 +1,9 @@
 @extends('default')
 @section('content')
     <div class="container-fluid">
+        @can('商店操作')
         <a href="{{route('shops.create')}}"><button type="button" class="btn btn-primary">添加商店及账户</button></a>
+            @endcan
     </div>
     <div class="container-fluid">
         <table class="table table-bordered table-hover">
@@ -20,12 +22,14 @@
                     <td>@if($shop_user->status==1) 已启用  @else 已禁用 @endif </td>
                     <td>{{$shop_user->shop->shop_name}}</td>
                     <td class="row">
+                        @can('商店查看')
                         <div class="col-xs-2">
                             <a href="{{route('shop_users.show',[$shop_user])}}">
                                 <button type="submit" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-zoom-in"></span></button>
                             </a>
                         </div>
-
+                            @endcan
+                            @can('商店操作')
                         <div class="col-xs-2">
                             <a href="{{route('shop_users.edit',[$shop_user])}}">
                                 <button type="submit" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></span></button>
@@ -38,6 +42,7 @@
                                 {{csrf_field()}}
                             </form>
                         </div>
+                            @endcan
                     </td>
                 </tr>
             @endforeach

@@ -1,7 +1,9 @@
 @extends('default')
 @section('content')
     <div class="container-fluid">
+        @can('商店操作')
         <a href="{{route('shops.create')}}"><button type="button" class="btn btn-primary">添加商店及账户</button></a>
+            @endcan
     </div>
     <div class="container-fluid">
         <table class="table table-bordered table-hover">
@@ -19,14 +21,14 @@
                     <td>@if($shop->status==1) 已启用 @elseif($shop->status==0) 审核中 @else 已禁用 @endif </td>
                     <td>{{$shop->shop_user->name}}</td>
                     <td class="row">
-
+                        @can('商店审核')
                         <div class="col-xs-2 row">
 
                             <a href="{{route('shops.show',[$shop])}}">
                                 <button type="submit" class="btn btn-primary btn-sm">去验证</button>
                             </a>
                         </div>
-
+                        @endcan
                     </td>
                 </tr>
             @endforeach

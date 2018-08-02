@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Hash;
 class SessionController extends Controller
 {
     //登入
+    public function login_view(){
+        return view('session/login');
+    }
     public function login(Request $request){
         $this->validate($request, [
             'name' => 'required',

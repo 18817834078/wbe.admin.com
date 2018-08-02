@@ -1,7 +1,9 @@
 @extends('default')
 @section('content')
     <div class="container-fluid">
+        @can('分类操作')
         <a href="{{route('shop_categories.create')}}"><button type="button" class="btn btn-primary">添加商店分类</button></a>
+            @endcan
     </div>
     <div class="container-fluid">
         <table class="table table-bordered table-hover">
@@ -17,6 +19,7 @@
                     <td><img height="50" src="{{$shop_category->img}}" alt="分类图片"></td>
                     <td>@if($shop_category->status==1) 是 @else 否 @endif</td>
                     <td class="row">
+                        @can('分类操作')
                         <div class="col-xs-1">
                             <a href="{{route('shop_categories.edit',[$shop_category])}}">
                                 <button type="submit" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></span></button>
@@ -29,11 +32,14 @@
                                 {{csrf_field()}}
                             </form>
                         </div>
+                            @endcan
                     </td>
                 </tr>
             @endforeach
         </table>
+        @can('商店审核')
         @if($shops->count()) <div style="color: orangered" class="container"><a href="/un_pass"><h5>您有未审核的商店</h5></a> </div> @endif
+        @endcan
     </div>
 
 {{ $shop_categories->links() }}

@@ -6,6 +6,7 @@ use App\model\Shop;
 use App\model\ShopCategory;
 use App\model\ShopUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class ShopUsersController extends Controller
 {
@@ -49,7 +50,15 @@ class ShopUsersController extends Controller
             $shop_user->update(['status'=>0]);
         }else{
             $shop_user->update(['status'=>1]);
+            //发邮件
+            Mail::raw('您的账号已通过审核',function ($message) use($shop_user){
+                $message->subject('审核通知');
+                $message->to($shop_user->email);
+            });
         }
+
+
+
         return back()->with('success','账户审核成功');
     }
     //密码修改

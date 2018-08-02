@@ -29,6 +29,16 @@
                         <input type="password" class="form-control" name="re_password">
                     </div>
                 </div>
+                <div class="form-group">
+                    <label  for="inputEmail3" class="col-sm-2 control-label">角色</label>
+                    <div class="col-sm-10">
+                        @foreach($roles as $role)
+                            <input type="checkbox" name="roles[]" value="{{$role->id}}">
+                            {{$role->name}}
+                            &emsp;&emsp;
+                        @endforeach
+                    </div>
+                </div>
 
                 {{ csrf_field() }}
 

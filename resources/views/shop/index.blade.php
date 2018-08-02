@@ -1,7 +1,9 @@
 @extends('default')
 @section('content')
     <div class="container-fluid">
+        @can('商店操作')
         <a href="{{route('shops.create')}}"><button type="button" class="btn btn-primary">添加商店及账户</button></a>
+            @endcan
     </div>
     <div class="container-fluid">
         <table class="table table-bordered table-hover">
@@ -32,16 +34,19 @@
                     <td>{{$shop->shop_user->name}}</td>
                     <td class="row">
                         <div class="col-xs-2">
+                            @can('商店查看')
                             <a href="{{route('shops.show',[$shop])}}">
                                 <button type="submit" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-zoom-in"></span></button>
                             </a>
                         </div>
-
+                        @endcan
+                        @can('商店操作')
                         <div class="col-xs-2">
                             <a href="{{route('shops.edit',[$shop])}}">
                                 <button type="submit" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-pencil"></span></button>
                             </a>
                         </div>
+
                         <div class="col-xs-2">
                             <form action="{{route('shops.destroy',[$shop])}}" method="post">
                                 <button type="submit" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash"></span></button>
@@ -49,6 +54,7 @@
                                 {{csrf_field()}}
                             </form>
                         </div>
+                        @endcan
                     </td>
                 </tr>
             @endforeach

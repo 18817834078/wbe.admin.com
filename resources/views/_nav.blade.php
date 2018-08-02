@@ -50,41 +50,8 @@
                 </li>
                 @endauth
                 @guest
-                <li><a href="#" data-toggle="modal" data-target="#myModal">登录</a></li>
-                {{--模态框begin--}}
-                <div data-backdrop="static" class="modal fade bs-example-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                    <div class="modal-dialog modal-sm" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title" id="myModalLabel">管理员登录</h4>
-                            </div>
-                            <form action="{{route('login')}}" method="post">
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">用户名</label>
-                                        <input type="text" class="form-control" placeholder="name" name="name">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">密码</label>
-                                        <input type="password" class="form-control" name="password">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="exampleInputEmail1">验证码</label>
-                                        <input id="captcha" type="text" class="form-control" name="captcha">
-                                    </div>
-                                    <img width="" class="thumbnail captcha" src="{{ captcha_src('default') }}"
-                                         onclick="this.src='/captcha/default?'+Math.random()" title="点击图片重新获取验证码">
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary  btn-block">登录</button>
-                                </div>
-                                {{ csrf_field() }}
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                {{--模态框end--}}
+                <li><a href="{{route('login_view')}}" >登录</a></li>
+
 
                 @endguest
 
