@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Hash;
 
 class SessionController extends Controller
 {
+    //去主页
+    public function to_index(){
+        return view('session/index');
+    }
     //登入
     public function login_view(){
         return view('session/login');

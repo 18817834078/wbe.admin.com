@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/', 'ShopCategoriesController@index');
+Route::get('/', 'SessionController@to_index');
 
 Route::resource('shop_categories','ShopCategoriesController');
 Route::resource('shops','ShopsController');
