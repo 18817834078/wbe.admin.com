@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\model\Permission;
 use App\model\Shop;
 use App\model\ShopCategory;
 use App\model\ShopUser;
@@ -13,19 +14,23 @@ class ShopsController extends Controller
 {
     //展示
     public function index(){
+        Permission::set_permission('商店查看');//设置权限
         $shops=Shop::paginate(5);
         return view('/shop/index',['shops'=>$shops]);
     }
     public function show(Shop $shop){
+        Permission::set_permission('商店查看');//设置权限
         $shop_user=ShopUser::where('shop_id','=',$shop->id)->first();
         return view('/shop_user/show',['shop'=>$shop,'shop_user'=>$shop_user]);
     }
     //添加
     public function create(){
+        Permission::set_permission('商店操作');//设置权限
         $shop_categories=ShopCategory::all()->where('status','=',1);
         return view('shop/create',['shop_categories'=>$shop_categories]);
     }
     public function store(Request $request){
+        Permission::set_permission('商店操作');//设置权限
         $this->validate($request, [
             'name' => 'required|max:50|unique:shop_users,name',
             'email' => 'required|email|unique:shop_users,email',
@@ -90,6 +95,7 @@ class ShopsController extends Controller
     }
     //删除
     public function destroy(Shop $shop){
+        Permission::set_permission('商店操作');//设置权限
         $shop_user=ShopUser::where('shop_id','=',$shop->id)->first();
         $shop->delete();
         $shop_user->delete();
@@ -98,11 +104,13 @@ class ShopsController extends Controller
     }
     //修改
     public function edit(Shop $shop){
+        Permission::set_permission('商店操作');//设置权限
         $shop_user=ShopUser::where('shop_id','=',$shop->id)->first();
         $shop_categories=ShopCategory::all()->where('status','=',1);
         return view('shop/edit',['shop'=>$shop,'shop_user'=>$shop_user,'shop_categories'=>$shop_categories]);
     }
     public function update(Request $request,Shop $shop,ShopUser $shop_user){
+        Permission::set_permission('商店操作');//设置权限
         $this->validate($request, [
             'shop_name' => 'required|max:50',
             'start_send' => 'required|numeric',
@@ -140,10 +148,12 @@ class ShopsController extends Controller
     }
     //审核
     public function un_pass(){
+        Permission::set_permission('商店审核');//设置权限
         $shops=Shop::where('status','=',0)->paginate(5);
         return view('/shop/pass',['shops'=>$shops]);
     }
     public function pass(Request $request,Shop $shop){
+        Permission::set_permission('商店审核');//设置权限
         $shop->update([
             'status'=>$request->status
         ]);

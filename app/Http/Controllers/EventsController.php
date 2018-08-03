@@ -5,23 +5,30 @@ namespace App\Http\Controllers;
 use App\model\Event;
 use App\model\EventMember;
 use App\model\EventPrize;
+use App\model\Permission;
+use App\model\ShopUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class EventsController extends Controller
 {
     //展示
     public function index(){
+        Permission::set_permission('管理抽奖活动');//设置权限
         $events=Event::paginate(5);
         return view('event/index',['events'=>$events]);
     }
     public function show(Event $event){
+        Permission::set_permission('管理抽奖活动');//设置权限
         return view('event/show',['event'=>$event]);
     }
     //添加
     public function create(){
+        Permission::set_permission('管理抽奖活动');//设置权限
         return view('event/create');
     }
     public function store(Request $request){
+        Permission::set_permission('管理抽奖活动');//设置权限
         $this->validate($request, [
             'title' => 'required|max:50',
             'signup_start' => 'required',
@@ -57,14 +64,17 @@ class EventsController extends Controller
     }
     //删除
     public function destroy(Event $event){
+        Permission::set_permission('管理抽奖活动');//设置权限
         $event->delete();
         return redirect()->route('events.index')->with('success','活动删除成功');
     }
     //修改
     public function edit(Event $event){
+        Permission::set_permission('管理抽奖活动');//设置权限
         return view('event.edit',['event'=>$event]);
     }
     public function update(Request $request,Event $event){
+        Permission::set_permission('管理抽奖活动');//设置权限
         $this->validate($request, [
             'title' => 'required|max:50',
             'signup_start' => 'required',
@@ -96,6 +106,7 @@ class EventsController extends Controller
     }
     //开奖
     public function open(Request $request){
+        Permission::set_permission('管理抽奖活动');//设置权限
         $the_event=Event::where('id',$request->event)->first();
         if ($the_event->is_prize){
             return back()->with('danger','此活动已开奖');
@@ -114,9 +125,16 @@ class EventsController extends Controller
             $prize_ids=array_slice($prize_ids,0,count($member_ids));
         }
         foreach ($prize_ids as $key=>$prize_id){
-            EventPrize::where('id',$prize_id)->first()->update([
+            $event_prize=EventPrize::where('id',$prize_id)->first();
+            $event_prize->update([
                 'member_id'=>$member_ids[$key]
             ]);
+            $email=ShopUser::where('id',$member_ids[$key])->first()->email;
+            Mail::raw('您在我不饿平台的'.$the_event->title.'活动中中奖了!奖品为'.$event_prize->name.',请登录查看',function ($message) use($email){
+                $message->subject('中奖通知');
+                $message->to($email);
+            });
+
         }
         $the_event->update([
             'is_prize'=>1,

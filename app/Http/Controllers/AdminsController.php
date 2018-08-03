@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\model\Admin;
 use App\model\ModelHasPermission;
 use App\model\ModelHasRole;
+use App\model\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
@@ -13,20 +14,24 @@ class AdminsController extends Controller
 {
     //展示
     public function index(){
+        Permission::set_permission('管理员查看');//设置权限
        $admins=Admin::paginate(5);
         return view('/admin/index',['admins'=>$admins]);
     }
     public function show(Admin $admin){
+        Permission::set_permission('管理员查看');//设置权限
         $roles=$admin->getRoleNames();
         $permissions=$admin->getAllPermissions();
         return view('admin/show',['admin'=>$admin,'roles'=>$roles,'permissions'=>$permissions]);
     }
     //添加
     public function create(){
+        Permission::set_permission('管理员操作');//设置权限
         $roles=Role::all();
         return view('/admin/create',['roles'=>$roles]);
     }
     public function store(Request $request){
+        Permission::set_permission('管理员操作');//设置权限
         $this->validate($request, [
             'name' => 'required|max:50|unique:admins,name',
             'email' => 'required|email|unique:admins,email',
@@ -59,12 +64,14 @@ class AdminsController extends Controller
     }
     //删除
     public function destroy(Admin $admin){
+        Permission::set_permission('管理员操作');//设置权限
         $admin->delete();
         session()->flash('success','删除成功');
         return redirect()->route('admins.index');
     }
     //修改
     public function edit(Admin $admin){
+        Permission::set_permission('管理员操作');//设置权限
         $roles=Role::all();
         $has_roles=$admin->getRoleNames();
         $the_roles=[];
@@ -74,6 +81,7 @@ class AdminsController extends Controller
         return view('/admin/edit',['admin'=>$admin,'the_roles'=>$the_roles,'roles'=>$roles]);
     }
     public function update(Request $request,Admin $admin){
+        Permission::set_permission('管理员操作');//设置权限
         $this->validate($request, [
             'name'=>['required','max:50',Rule::unique('admins')->ignore($admin->id)],
             'email'=>['required','email',Rule::unique('admins')->ignore($admin->id)],

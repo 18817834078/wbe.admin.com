@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\model\OrderGood;
+use App\model\Permission;
 use Illuminate\Http\Request;
 
 class MenusController extends Controller
 {
     //统计
     public function count(Request $request){
+        Permission::set_permission('菜品统计');//设置权限
         $menus_all=OrderGood::all();
         $count_all=0;
         $count_today=0;

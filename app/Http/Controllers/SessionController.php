@@ -37,7 +37,7 @@ class SessionController extends Controller
     public function logout(){
         Auth::logout();
         session()->flash('danger','已成功注销登录状态');
-        return redirect()->route('admins.index');
+        return redirect()->route('login_view');
     }
     //修改密码
     public function reset_password(){

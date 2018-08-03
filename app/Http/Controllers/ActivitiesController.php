@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\model\Activity;
+use App\model\Permission;
 use Illuminate\Http\Request;
 
 class ActivitiesController extends Controller
 {
     //展示
     public function index(Request $request){
+        Permission::set_permission('活动查看');//设置权限
         $time=date('Y-m-d\TH:i',time());
         if (!$request->status){
             $activities=Activity::paginate(5);
@@ -26,13 +28,16 @@ class ActivitiesController extends Controller
         return view('activity/index',['activities'=>$activities,'status'=>$request->status]);
     }
     public function show(Activity $activity){
+        Permission::set_permission('活动查看');//设置权限
         return view('activity/show',['activity'=>$activity]);
     }
     //添加
     public function create(){
+        Permission::set_permission('活动操作');//设置权限
         return view('activity/create');
     }
     public function store(Request $request){
+        Permission::set_permission('活动操作');//设置权限
         $this->validate($request, [
             'title' => 'required|max:50',
             'start_time' => 'required',
@@ -57,15 +62,18 @@ class ActivitiesController extends Controller
     }
     //删除
     public function destroy(Activity $activity){
+        Permission::set_permission('活动操作');//设置权限
         $activity->delete();
         session()->flash('success','删除成功');
         return redirect()->route('activities.index');
     }
     //修改
     public function edit(Activity $activity){
+        Permission::set_permission('活动操作');//设置权限
         return view('activity/edit',['activity'=>$activity]);
     }
     public function update(Request $request,Activity $activity){
+        Permission::set_permission('活动操作');//设置权限
         $this->validate($request, [
             'title' => 'required|max:50',
             'start_time' => 'required',

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\model\Permission;
 use App\model\Shop;
 use App\model\ShopCategory;
 use App\model\ShopUser;
@@ -12,10 +13,12 @@ class ShopUsersController extends Controller
 {
     //展示
     public function index(){
+        Permission::set_permission('账户查看');//设置权限
         $shop_users=ShopUser::paginate(5);
         return view('/shop_user/index',['shop_users'=>$shop_users]);
     }
     public function show(ShopUser $shop_user){
+        Permission::set_permission('账户查看');//设置权限
         $shop=Shop::where('id','=',$shop_user->shop_id)->first();
         return view('/shop_user/show',['shop'=>$shop,'shop_user'=>$shop_user]);
     }
@@ -28,6 +31,7 @@ class ShopUsersController extends Controller
     }
     //删除
     public function destroy(ShopUser $shop_user){
+        Permission::set_permission('账户操作');//设置权限
         $shop=Shop::where('id','=',$shop_user->shop_id)->first();
         $shop_user->delete();
         $shop->delete();
@@ -36,6 +40,7 @@ class ShopUsersController extends Controller
     }
     //修改
     public function edit(ShopUser $shop_user){
+        Permission::set_permission('账户操作');//设置权限
         $shop=Shop::where('id','=',$shop_user->shop_id)->first();
         $shop_categories=ShopCategory::all();
         return view('shop/edit',['shop'=>$shop,'shop_user'=>$shop_user,'shop_categories'=>$shop_categories]);
@@ -46,6 +51,7 @@ class ShopUsersController extends Controller
     //审核
 
     public function pass(ShopUser $shop_user){
+        Permission::set_permission('账户审核');//设置权限
         if ($shop_user->status==1){
             $shop_user->update(['status'=>0]);
         }else{
@@ -63,9 +69,11 @@ class ShopUsersController extends Controller
     }
     //密码修改
     public function shop_user_password(ShopUser $shop_user){
+        Permission::set_permission('账户操作');//设置权限
         return view('shop_user/edit',['shop_user'=>$shop_user]);
     }
     public function shop_user_password_store(Request $request,ShopUser $shop_user){
+        Permission::set_permission('账户操作');//设置权限
         $this->validate($request, [
             'new_password' => 'required',
             're_password' => 'required',

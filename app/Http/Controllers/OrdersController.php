@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\model\Order;
+use App\model\Permission;
 use Illuminate\Http\Request;
 
 class OrdersController extends Controller
 {
     public function count(Request $request){
+        Permission::set_permission('订单统计');//设置权限
         $orders_all=Order::all();
         $count_all=0;
         $count_today=0;
