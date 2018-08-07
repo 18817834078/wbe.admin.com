@@ -8,6 +8,7 @@ use App\model\ShopCategory;
 use App\model\ShopUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redis;
 
 class ShopUsersController extends Controller
 {
@@ -35,6 +36,11 @@ class ShopUsersController extends Controller
         $shop=Shop::where('id','=',$shop_user->shop_id)->first();
         $shop_user->delete();
         $shop->delete();
+        //redis修改
+        if (Redis::get('shops_json')){
+            Redis::del('shops_json');
+        }
+
         session()->flash('success','删除成功');
         return redirect()->route('shop_users.index');
     }
@@ -62,7 +68,10 @@ class ShopUsersController extends Controller
                 $message->to($shop_user->email);
             });
         }
-
+        //redis修改
+        if (Redis::get('shops_json')){
+            Redis::del('shops_json');
+        }
 
 
         return back()->with('success','账户审核成功');

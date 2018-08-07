@@ -11,6 +11,15 @@ class ActivitiesController extends Controller
     //展示
     public function index(Request $request){
         Permission::set_permission('活动查看');//设置权限
+        //shop端页面生成
+        $activities=Activity::where('end_time','>=',date('Y-m-d',time()))->get();
+        $activities_shop=view('activity/index_shop',['activities'=>$activities]);
+        file_put_contents('activity/activities_shop.html',$activities_shop);
+        foreach ($activities as $val){
+            $activityID_shop=view('activity/show_shop',['activity'=>$val]);
+            file_put_contents('activity/activity'.$val->id.'_shop.html',$activityID_shop);
+        }
+        //admin页面展示
         $time=date('Y-m-d\TH:i',time());
         if (!$request->status){
             $activities=Activity::paginate(5);
@@ -24,7 +33,6 @@ class ActivitiesController extends Controller
                 ['end_time','>=',$time],
                 ])->paginate(5);
         }
-
         return view('activity/index',['activities'=>$activities,'status'=>$request->status]);
     }
     public function show(Activity $activity){

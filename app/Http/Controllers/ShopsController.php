@@ -9,6 +9,7 @@ use App\model\ShopUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redis;
 
 class ShopsController extends Controller
 {
@@ -88,6 +89,11 @@ class ShopsController extends Controller
                 'password'=>bcrypt($request->password),
             ]);
         });
+        //redis修改
+        if (Redis::get('shops_json')){
+            Redis::del('shops_json');
+        }
+
 
         session()->flash('success','添加成功');
         return redirect()->route('shops.index');
@@ -99,6 +105,12 @@ class ShopsController extends Controller
         $shop_user=ShopUser::where('shop_id','=',$shop->id)->first();
         $shop->delete();
         $shop_user->delete();
+        //redis修改
+        if (Redis::get('shops_json')){
+            Redis::del('shops_json');
+        }
+
+
         session()->flash('success','删除成功');
         return redirect()->route('shops.index');
     }
@@ -141,6 +153,13 @@ class ShopsController extends Controller
             $shop_update['shop_img']=$request->shop_img;
         }
         $shop->update($shop_update);
+        //redis修改
+        if (Redis::get('shops_json')){
+            Redis::del('shops_json');
+        }
+        if (Redis::get('shop_json'.$shop)){
+            Redis::del('shop_json'.$shop);
+        }
 
         session()->flash('success','修改成功');
         return redirect()->route('shops.index');
@@ -150,6 +169,11 @@ class ShopsController extends Controller
     public function un_pass(){
         Permission::set_permission('商店审核');//设置权限
         $shops=Shop::where('status','=',0)->paginate(5);
+        //redis修改
+        if (Redis::get('shops_json')){
+            Redis::del('shops_json');
+        }
+
         return view('/shop/pass',['shops'=>$shops]);
     }
     public function pass(Request $request,Shop $shop){
@@ -157,7 +181,10 @@ class ShopsController extends Controller
         $shop->update([
             'status'=>$request->status
         ]);
-
+        //redis修改
+        if (Redis::get('shops_json')){
+            Redis::del('shops_json');
+        }
 
         return back()->with('success','商店审核成功');
     }
